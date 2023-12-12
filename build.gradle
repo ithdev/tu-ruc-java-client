@@ -1,0 +1,28 @@
+plugins {
+    id("java")
+}
+
+group = "org.ith"
+version = "0.0.1-beta"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    //Gson
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    //OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.squareup.okhttp3:okhttp-urlconnection:4.9.1")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    //Testing
+    testImplementation(platform("org.junit:junit-bom:5.9.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
