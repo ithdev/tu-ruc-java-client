@@ -3,6 +3,7 @@ import org.ith.client.TuRuc;
 import org.ith.client.TuRucClient;
 import org.ith.model.BaseResponse;
 import org.ith.model.Contribuyente;
+import org.ith.model.DataTableResponse;
 import org.ith.model.SearchResponse;
 import org.junit.jupiter.api.Test;
 import retrofit2.Response;
@@ -24,9 +25,21 @@ public class MainTest {
     }
 
     @Test
-    public void getContribuyente() throws IOException {
+    public void getContribuyenteWithParam() throws IOException {
         TuRucClient tuRucClient = getTuRucClient();
-        Response<BaseResponse<Contribuyente>> response = tuRucClient.getContribuyente("31244-2").execute();
+        Response<BaseResponse<Contribuyente>> response = tuRucClient.getContribuyenteWithParam("2545078-6").execute();
+        if (response.isSuccessful()) {
+            System.out.println(response.body());
+        }else {
+            assert response.errorBody() != null;
+            System.out.println(new Gson().fromJson(response.errorBody().string(), BaseResponse.class));
+        }
+    }
+
+    @Test
+    public void getContribuyenteWithPathVariable() throws IOException {
+        TuRucClient tuRucClient = getTuRucClient();
+        Response<BaseResponse<Contribuyente>> response = tuRucClient.getContribuyenteWithPathVariable("2545078-6").execute();
         if (response.isSuccessful()) {
             System.out.println(response.body());
         }else {
@@ -38,7 +51,19 @@ public class MainTest {
     @Test
     public void searchContribuyentes() throws IOException {
         TuRucClient tuRucClient = getTuRucClient();
-        Response<BaseResponse<SearchResponse>> response = tuRucClient.searchContribuyentes("ESTEBAN", 0).execute();
+        Response<BaseResponse<SearchResponse>> response = tuRucClient.searchContribuyentesSimple("ESTEBAN", 0).execute();
+        if (response.isSuccessful()) {
+            System.out.println(response.body());
+        }else {
+            assert response.errorBody() != null;
+            System.out.println(new Gson().fromJson(response.errorBody().string(), BaseResponse.class));
+        }
+    }
+
+    @Test
+    public void searchContribuyentesTable() throws IOException {
+        TuRucClient tuRucClient = getTuRucClient();
+        Response<DataTableResponse<Contribuyente>> response = tuRucClient.searchContribuyentesTable(1, 0, 10, "2545078-6").execute();
         if (response.isSuccessful()) {
             System.out.println(response.body());
         }else {
