@@ -1,13 +1,10 @@
 package org.ith.client;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.alibaba.fastjson2.support.retrofit.Retrofit2ConverterFactory;
+import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import java.util.concurrent.TimeUnit;
 
 public class TuRuc {
 
@@ -18,7 +15,6 @@ public class TuRuc {
     private final int writeTimeout;
     private final int readTimeout;
     private final int connectTimeout;
-
 
     public TuRuc(String apiUrl) {
         this.apiUrl = apiUrl;
@@ -39,7 +35,7 @@ public class TuRuc {
     public TuRucClient getClient() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        //Http Client
+        // Http Client
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
                 .callTimeout(callTimeout, TimeUnit.SECONDS)
@@ -47,17 +43,12 @@ public class TuRuc {
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .connectTimeout(connectTimeout, TimeUnit.SECONDS)
                 .build();
-        //Serializator
-        Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd")
-                .create();
-        //Retrofit
+        // Retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(apiUrl)
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(Retrofit2ConverterFactory.create())
                 .client(client)
                 .build();
         return retrofit.create(TuRucClient.class);
     }
-
 }
