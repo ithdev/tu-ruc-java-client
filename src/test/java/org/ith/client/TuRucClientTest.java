@@ -14,11 +14,18 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.ith.model.Contribuyente;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,12 +42,43 @@ class TuRucClientTest {
     @BeforeEach
     void startServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-        client = new TuRuc("http://127.0.0.1:" + server.getAddress().getPort() + "/", 5, 5, 5, 5).getClient();
+        client = new TuRuc(baseUrl(), 5, 5, 5, 5).getClient();
     }
 
     @AfterEach
     void stopServer() {
         server.stop(0);
+    }
+
+    @Test
+    void doesNotLogRequestsByDefault() throws Exception {
+        respond(200, """
+                {"data":{"doc":80024191,"ruc":"80024191-6"},"message":"OK"}
+                """);
+
+        var logs = captureOkHttpLogs(() -> client.getContribuyente("80024191-6").execute());
+
+        assertEquals(List.of(), logs);
+    }
+
+    @Test
+    void logsResponseBodyWhenRequested() throws Exception {
+        respond(200, """
+                {"data":{"doc":80024191,"ruc":"80024191-6"},"message":"OK"}
+                """);
+        var loggingClient = new TuRuc(baseUrl(), 5, 5, 5, 5)
+                .withLogLevel(HttpLoggingInterceptor.Level.BODY)
+                .getClient();
+
+        var logs = captureOkHttpLogs(
+                () -> loggingClient.getContribuyente("80024191-6").execute());
+
+        assertTrue(logs.stream().anyMatch(line -> line.contains("\"ruc\":\"80024191-6\"")), logs.toString());
+    }
+
+    @Test
+    void rejectsNullLogLevel() {
+        assertThrows(NullPointerException.class, () -> new TuRuc(baseUrl()).withLogLevel(null));
     }
 
     @Test
@@ -154,6 +192,38 @@ class TuRucClientTest {
                 .collect(Collectors.toMap(
                         pair -> URLDecoder.decode(pair[0], StandardCharsets.UTF_8),
                         pair -> URLDecoder.decode(pair[1], StandardCharsets.UTF_8)));
+    }
+
+    private String baseUrl() {
+        return "http://127.0.0.1:" + server.getAddress().getPort() + "/";
+    }
+
+    private interface Call {
+        void run() throws IOException;
+    }
+
+    private static List<String> captureOkHttpLogs(Call call) throws IOException {
+        var logger = Logger.getLogger(OkHttpClient.class.getName());
+        var lines = new ArrayList<String>();
+        var handler = new Handler() {
+            @Override
+            public void publish(LogRecord logRecord) {
+                lines.add(logRecord.getMessage());
+            }
+
+            @Override
+            public void flush() {}
+
+            @Override
+            public void close() {}
+        };
+        logger.addHandler(handler);
+        try {
+            call.run();
+        } finally {
+            logger.removeHandler(handler);
+        }
+        return lines;
     }
 
     private void respond(int status, String json) {
