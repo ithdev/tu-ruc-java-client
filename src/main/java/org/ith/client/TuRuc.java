@@ -1,6 +1,7 @@
 package org.ith.client;
 
 import com.alibaba.fastjson2.support.retrofit.Retrofit2ConverterFactory;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -15,6 +16,7 @@ public class TuRuc {
     private final int writeTimeout;
     private final int readTimeout;
     private final int connectTimeout;
+    private HttpLoggingInterceptor.Level logLevel = HttpLoggingInterceptor.Level.NONE;
 
     public TuRuc(String apiUrl) {
         this.apiUrl = apiUrl;
@@ -32,17 +34,28 @@ public class TuRuc {
         this.connectTimeout = connectTimeout;
     }
 
+    /**
+     * Registra el tráfico HTTP en el log de OkHttp. Por defecto no se registra nada; {@code BODY} incluye los
+     * datos de los contribuyentes consultados.
+     */
+    public TuRuc withLogLevel(HttpLoggingInterceptor.Level logLevel) {
+        this.logLevel = Objects.requireNonNull(logLevel, "logLevel");
+        return this;
+    }
+
     public TuRucClient getClient() {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         // Http Client
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .callTimeout(callTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .connectTimeout(connectTimeout, TimeUnit.SECONDS)
-                .build();
+                .connectTimeout(connectTimeout, TimeUnit.SECONDS);
+        if (logLevel != HttpLoggingInterceptor.Level.NONE) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(logLevel);
+            builder.addInterceptor(interceptor);
+        }
+        OkHttpClient client = builder.build();
         // Retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(apiUrl)

@@ -2,6 +2,10 @@
 
 ## 0.1.0 — Sin publicar
 
+- Cambio incompatible: el cliente deja de registrar por defecto cada petición y
+  respuesta completas (`HttpLoggingInterceptor.Level.BODY`). El nuevo
+  `TuRuc.withLogLevel(Level)` activa el logging de OkHttp con el nivel indicado;
+  `logging-interceptor` pasa a ser dependencia `api`.
 - Compatibilidad verificada con Java 17, 21 y 25; JDK 25 para compilar por defecto
   y bytecode Java 17 para consumidores.
 - Gradle 9.8.1 con wrapper regenerado y SHA-256 de distribución verificado.

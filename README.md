@@ -61,8 +61,6 @@ var page = client.searchContribuyentes("NUÑEZ", 0).execute();
   síncrona o `enqueue()` para una asíncrona.
 - Crea el cliente una vez y reutilízalo; cada llamada a `getClient()` crea un
   cliente HTTP nuevo.
-- El cliente registra cada petición y respuesta completas, con su cuerpo, en el
-  log de OkHttp.
 
 ### Respuestas
 
@@ -97,6 +95,24 @@ completa. Para cambiarlos, indica los valores en segundos:
 TuRucClient client = new TuRuc("https://turuc.com.py/", 30, 10, 10, 5).getClient();
 ```
 
+### Logging
+
+Por defecto, el cliente no registra el tráfico HTTP. Para depurar, indica un
+nivel de `HttpLoggingInterceptor` de OkHttp:
+
+```java
+import okhttp3.logging.HttpLoggingInterceptor;
+
+TuRucClient client = new TuRuc("https://turuc.com.py/")
+        .withLogLevel(HttpLoggingInterceptor.Level.BODY)
+        .getClient();
+```
+
+`BASIC` registra la petición y el estado de la respuesta; `HEADERS` agrega las
+cabeceras; `BODY` también registra los cuerpos, con los datos de los
+contribuyentes consultados. Los mensajes van al log de OkHttp
+(`java.util.logging`, logger `okhttp3.OkHttpClient`).
+
 ## Migración desde 0.0.1-beta
 
 La versión 0.1.0 cambia el modelo `Contribuyente` para reflejar la respuesta
@@ -121,6 +137,9 @@ de Gson, captura `IOException`. La biblioteca ya no trae Gson como dependencia;
 si tu proyecto lo usa, decláralo por tu cuenta.
 
 Las dependencias transitivas pasan a Retrofit 3.0.0 y OkHttp 5.5.0.
+
+El cliente ya no registra las peticiones y respuestas completas. Si dependías de
+esos logs, actívalos con `withLogLevel(HttpLoggingInterceptor.Level.BODY)`.
 
 ## Cambios
 
