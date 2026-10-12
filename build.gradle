@@ -1,10 +1,14 @@
+import com.vanniktech.maven.publish.JavaLibrary
+import com.vanniktech.maven.publish.JavadocJar
+
 plugins {
     id("java-library")
     id("pmd")
     id("com.diffplug.spotless") version "8.10.4"
+    id("com.vanniktech.maven.publish") version "0.37.0"
 }
 
-group = "org.ith"
+group = "py.com.ith"
 version = "0.1.0"
 
 java {
@@ -45,6 +49,11 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.withType(Javadoc).configureEach {
+    options.encoding = "UTF-8"
+    options.addBooleanOption("Xdoclint:all,-missing", true)
+}
+
 spotless {
     java {
         palantirJavaFormat("2.102.0")
@@ -60,4 +69,46 @@ pmd {
     ruleSets = []
     ruleSetFiles = files("config/pmd/ruleset.xml")
     consoleOutput = true
+}
+
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+    coordinates(project.group.toString(), "tu-ruc-client", project.version.toString())
+    configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
+
+    pom {
+        name = "Tu RUC Java Client"
+        description = "Cliente Java para consultar y buscar contribuyentes en la API de Tu RUC."
+        inceptionYear = "2023"
+        url = "https://github.com/ithdev/tu-ruc-java-client"
+        licenses {
+            license {
+                name = "MIT License"
+                url = "https://opensource.org/license/mit"
+                distribution = "repo"
+            }
+        }
+        developers {
+            developer {
+                id = "ithdev"
+                name = "ITH E.A.S."
+                url = "https://ith.com.py"
+            }
+        }
+        scm {
+            url = "https://github.com/ithdev/tu-ruc-java-client"
+            connection = "scm:git:https://github.com/ithdev/tu-ruc-java-client.git"
+            developerConnection = "scm:git:ssh://git@github.com/ithdev/tu-ruc-java-client.git"
+        }
+    }
+}
+
+// Maven Central rechaza artefactos sin firmar; para publicar en Maven local no hace falta firmar.
+signing {
+    required = {
+        gradle.taskGraph.allTasks.any {
+            it.name.contains("MavenCentral")
+        }
+    }
 }

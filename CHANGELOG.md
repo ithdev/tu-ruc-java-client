@@ -1,7 +1,11 @@
 # Changelog
 
-## 0.1.0 — Sin publicar
+## 0.1.0 — 2026-10-12
 
+- Publicación en Maven Central como `py.com.ith:tu-ruc-client`, con JAR de
+  fuentes, Javadoc y firmas PGP. El `groupId` cambia de `org.ith` a `py.com.ith`,
+  el dominio de ITH; los paquetes Java `org.ith.*` no cambian.
+- Licencia MIT.
 - Cambio incompatible: el cliente deja de registrar por defecto cada petición y
   respuesta completas (`HttpLoggingInterceptor.Level.BODY`). El nuevo
   `TuRuc.withLogLevel(Level)` activa el logging de OkHttp con el nivel indicado;

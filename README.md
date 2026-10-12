@@ -9,30 +9,25 @@ Java 17 o superior.
 
 ## Instalación
 
-La biblioteca todavía no se publica en un repositorio Maven. Para usarla desde
-otro proyecto Gradle, clona este repositorio junto a tu proyecto y agrega a su
-`settings.gradle`:
+La biblioteca se publica en Maven Central como `py.com.ith:tu-ruc-client`.
+
+Gradle:
 
 ```groovy
-includeBuild("../tu-ruc-java-client")
-```
-
-Y a su `build.gradle`:
-
-```groovy
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    implementation("org.ith:tu-ruc-client:0.1.0")
+    implementation("py.com.ith:tu-ruc-client:0.1.0")
 }
 ```
 
-Gradle compila la biblioteca y resuelve sus dependencias desde Maven Central.
-Para compilarla así necesitas JDK 25 instalado, aunque el resultado funciona
-desde Java 17. Si usas el JAR de `build/libs/`, agrega tú sus dependencias:
-el JAR no las incluye.
+Maven:
+
+```xml
+<dependency>
+    <groupId>py.com.ith</groupId>
+    <artifactId>tu-ruc-client</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
 
 ## Uso
 
@@ -138,12 +133,20 @@ si tu proyecto lo usa, decláralo por tu cuenta.
 
 Las dependencias transitivas pasan a Retrofit 3.0.0 y OkHttp 5.5.0.
 
+Las coordenadas Maven pasan de `org.ith:tu-ruc-client` a
+`py.com.ith:tu-ruc-client`. Los paquetes Java no cambian: los imports siguen
+siendo `org.ith.client` y `org.ith.model`.
+
 El cliente ya no registra las peticiones y respuestas completas. Si dependías de
 esos logs, actívalos con `withLogLevel(HttpLoggingInterceptor.Level.BODY)`.
 
 ## Cambios
 
 Consulta [CHANGELOG.md](CHANGELOG.md) para conocer los cambios de cada versión.
+
+## Licencia
+
+[MIT](LICENSE).
 
 ## Contribuciones
 
