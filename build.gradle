@@ -91,7 +91,7 @@ mavenPublishing {
         developers {
             developer {
                 id = "ithdev"
-                name = "ITH"
+                name = "ITH E.A.S."
                 url = "https://ith.com.py"
             }
         }
