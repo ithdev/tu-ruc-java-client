@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — Sin publicar
+## 0.1.0 — 2026-10-12
 
 - Publicación en Maven Central como `py.com.ith:tu-ruc-client`, con JAR de
   fuentes, Javadoc y firmas PGP. El `groupId` cambia de `org.ith` a `py.com.ith`,
