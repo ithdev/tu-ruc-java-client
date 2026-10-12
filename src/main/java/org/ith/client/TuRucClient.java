@@ -10,14 +10,10 @@ import retrofit2.http.Query;
 public interface TuRucClient {
 
     @GET("api/contribuyente")
-    Call<BaseResponse<Contribuyente>> getContribuyente(
-            @Query(value="ruc", encoded=false) String ruc
-    );
+    Call<BaseResponse<Contribuyente>> getContribuyente(@Query(value = "ruc", encoded = false) String ruc);
 
     @GET("api/contribuyente/search")
     Call<BaseResponse<SearchResponse>> searchContribuyentes(
-            @Query(value="search", encoded=false) String search,
-            @Query(value="page", encoded=false) Integer page
-    );
-
+            @Query(value = "search", encoded = false) String search,
+            @Query(value = "page", encoded = false) Integer page);
 }

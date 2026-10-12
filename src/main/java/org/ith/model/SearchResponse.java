@@ -8,8 +8,7 @@ public class SearchResponse {
     private List<Contribuyente> contribuyentes;
     private Integer paginas;
 
-    public SearchResponse() {
-    }
+    public SearchResponse() {}
 
     public SearchResponse(List<Contribuyente> contribuyentes, Integer paginas) {
         this.contribuyentes = contribuyentes;
@@ -34,10 +33,7 @@ public class SearchResponse {
 
     @Override
     public String toString() {
-        return "SearchResponse{" +
-                "contribuyentes=" + contribuyentes +
-                ", paginas=" + paginas +
-                '}';
+        return "SearchResponse{" + "contribuyentes=" + contribuyentes + ", paginas=" + paginas + '}';
     }
 
     @Override
@@ -45,8 +41,7 @@ public class SearchResponse {
         if (this == o) return true;
         if (!(o instanceof SearchResponse that)) return false;
 
-        if (!Objects.equals(contribuyentes, that.contribuyentes))
-            return false;
+        if (!Objects.equals(contribuyentes, that.contribuyentes)) return false;
         return Objects.equals(paginas, that.paginas);
     }
 
@@ -56,5 +51,4 @@ public class SearchResponse {
         result = 31 * result + (paginas != null ? paginas.hashCode() : 0);
         return result;
     }
-
 }
