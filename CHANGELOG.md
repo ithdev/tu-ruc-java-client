@@ -2,6 +2,10 @@
 
 ## 0.1.0 — Sin publicar
 
+- Publicación en Maven Central como `py.com.ith:tu-ruc-client`, con JAR de
+  fuentes, Javadoc y firmas PGP. El `groupId` cambia de `org.ith` a `py.com.ith`,
+  el dominio de ITH; los paquetes Java `org.ith.*` no cambian.
+- Licencia MIT.
 - Compatibilidad verificada con Java 17, 21 y 25; JDK 25 para compilar por defecto
   y bytecode Java 17 para consumidores.
 - Gradle 9.8.1 con wrapper regenerado y SHA-256 de distribución verificado.
